@@ -1,0 +1,23 @@
+# HTTPS is REQUIRED for GPS and for installing the PWA on phones (except on localhost).
+# Set AFH_DOMAIN to your domain (DNS must point to this server); Caddy gets a free certificate automatically.
+services:
+  afh:
+    build: .
+    restart: unless-stopped
+    environment:
+      AFH_OWNER_PASSWORD: ${AFH_OWNER_PASSWORD:-}   # optional first-run password (otherwise generated, see logs)
+    volumes:
+      - afh_data:/data
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    environment:
+      AFH_DOMAIN: ${AFH_DOMAIN:?set AFH_DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    depends_on: [afh]
+volumes:
+  afh_data:
+  caddy_data:

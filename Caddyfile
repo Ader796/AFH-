@@ -1,0 +1,6 @@
+{$AFH_DOMAIN} {
+	encode gzip
+	reverse_proxy afh:8000 {
+		flush_interval -1
+	}
+}
